@@ -43,9 +43,9 @@ BUILDFLAGS := --rm --force-rm --compress -f $(CURDIR)/$(ARCH)/$(DISTRIB)/Dockerf
 	--label org.label-schema.vcs-url="https://github.com/$(GITHUB_USER)/$(OPSYS)_$(SVCNAME)" \
 	--label org.label-schema.vendor=$(DOCKER_USER)
 
-MOUNTFLAGS := #
-OTHERFLAGS := #
-PORTFLAGS  := #
+MOUNTFLAGS := -v /dev/:/dev -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v /glusterfs/data:/data -v /glusterfs/metadata:/var/lib/glusterd 
+OTHERFLAGS := --privileged=true
+PORTFLAGS  := -p 24007:24007 -p 24009:24009 -p 49152:49152
 CACHEFLAGS := # --no-cache=true --pull
 NAMEFLAGS  := --name $(OPSYS)_$(CNTNAME) --hostname $(CNTNAME)
 RUNFLAGS   := -e PGID=$(PGID) -e PUID=$(PUID)
