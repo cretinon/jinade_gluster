@@ -43,8 +43,8 @@ BUILDFLAGS := --rm --force-rm --compress -f $(CURDIR)/$(ARCH)/$(DISTRIB)/Dockerf
 	--label org.label-schema.vcs-url="https://github.com/$(GITHUB_USER)/$(OPSYS)_$(SVCNAME)" \
 	--label org.label-schema.vendor=$(DOCKER_USER)
 
-MOUNTFLAGS := -v /dev/:/dev -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v /glusterfs/data:/data -v /glusterfs/metadata:/var/lib/glusterd 
-OTHERFLAGS := --privileged=true
+MOUNTFLAGS := -v /dev/:/dev -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v /glusterfs/data:/data -v /glusterfs/metadata:/var/lib/glusterd -v /glusterfs/etc/hosts:/etc/hosts 
+OTHERFLAGS := --network gluster-net --ip=10.2.0.10 --privileged=true
 PORTFLAGS  := -p 24007:24007 -p 24009:24009 -p 49152:49152
 CACHEFLAGS := # --no-cache=true --pull
 NAMEFLAGS  := --name $(OPSYS)_$(CNTNAME) --hostname $(CNTNAME)
@@ -83,12 +83,16 @@ rm : stop
 	docker rm -f $(OPSYS)_$(CNTNAME)
 
 start :
+	mkdir -p /glusterfs/data ; mkdir -p /glusterfs/metadata ; mkdir -p /glusterfs/etc 
+	docker network create -d overlay gluster-net --attachable --subnet=10.2.0.0/24
 	docker run -d $(NAMEFLAGS) $(RUNFLAGS) $(PORTFLAGS) $(MOUNTFLAGS) $(OTHERFLAGS) $(IMAGETAG) $(CONTARGS)
 
 rshell :
 	docker exec -u root -it $(OPSYS)_$(CNTNAME) $(SHCOMMAND)
 
 shell :
+	mkdir -p /glusterfs/data ; mkdir -p /glusterfs/metadata ; mkdir -p /glusterfs/etc
+	docker network create -d overlay gluster-net --attachable --subnet=10.2.0.0/24
 	docker run --rm -it $(NAMEFLAGS) $(RUNFLAGS) $(PORTFLAGS) $(MOUNTFLAGS) $(OTHERFLAGS) $(IMAGETAG) $(SHCOMMAND)
 
 stop :
