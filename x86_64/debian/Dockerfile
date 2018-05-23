@@ -12,4 +12,4 @@ RUN chmod 755 /usr/local/entrypoint.sh
 
 VOLUME ["/data", "/var/lib/glusterd"]
 EXPOSE 111 111/udp 24007 24009 49152
-ENTRYPOINT ["/usr/local/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/entrypoint.sh", "-v"]

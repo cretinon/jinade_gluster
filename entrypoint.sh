@@ -43,20 +43,24 @@ _gluster_peer_probe () {
 
 _novolumepresent () {
     gluster volume list 2>&1 > /tmp/volumes
-    if grep "No volumes" /tmp/volumes 2>&1> /dev/null; then return 1; else return 0; fi
+    NB_DATASTORE=$(grep -i datastore /tmp/volumes | wc -l)
+    if [ $NB_DATASTORE -eq 1 ]; then return 0; else return 1; fi
 }
 _gluster_volume_create () {
     _start_debug ${FUNCNAME[0]} $*
-    
-    if _novolumepresent; then
-	if [ $VERBOSE = "true" ]; then echo "volume exists" $* ; fi
-    else
+
+    _novolumepresent
+    RETURN=$?
+    while [ $RETURN -eq 1 ]; do
 	if [ $VERBOSE = "true" ]; then echo "no volume" $* ; fi
 	IP1="gluster-1"
 	IP2="gluster-2"
 	gluster --mode=script volume create datastore replica 2 $IP1:/data/datastore $IP2:/data/datastore
 	gluster volume start datastore
-    fi
+	_novolumepresent
+	RETURN=$?
+	sleep 5
+    done
     
     _end_debug ${FUNCNAME[0]} $*
 }
