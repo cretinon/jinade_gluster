@@ -5,7 +5,7 @@ ARG USERNAME=frommakefile
 #
 FROM ${USERNAME}/${DOCKERSRC}:${DISTRIB}_${ARCH}
 #
-RUN apt-get update && apt-get -y -q install --no-install-recommends glusterfs-server && apt-get clean && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
+RUN apt-get update && apt-get -y -q install --no-install-recommends dnsutils procps net-tools lsof iputils-ping glusterfs-server && apt-get clean && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 VOLUME ["/data", "/var/lib/glusterd"]
 EXPOSE 111 111/udp 24007 24009 49152
