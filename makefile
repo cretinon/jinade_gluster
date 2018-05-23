@@ -84,7 +84,7 @@ rm : stop
 
 start :
 	mkdir -p /glusterfs/data ; mkdir -p /glusterfs/metadata ; mkdir -p /glusterfs/etc 
-	docker network create -d overlay gluster-net --attachable --subnet=10.2.0.0/24
+	if docker network ls | grep gluster-net ; then echo "no creation" ; else docker network create -d overlay gluster-net --attachable --subnet=10.2.0.0/24; fi
 	docker run -d $(NAMEFLAGS) $(RUNFLAGS) $(PORTFLAGS) $(MOUNTFLAGS) $(OTHERFLAGS) $(IMAGETAG) $(CONTARGS)
 
 rshell :
@@ -92,7 +92,7 @@ rshell :
 
 shell :
 	mkdir -p /glusterfs/data ; mkdir -p /glusterfs/metadata ; mkdir -p /glusterfs/etc
-	docker network create -d overlay gluster-net --attachable --subnet=10.2.0.0/24
+	if docker network ls | grep gluster-net ; then echo "no creation" ; else docker network create -d overlay gluster-net --attachable --subnet=10.2.0.0/24; fi
 	docker run --rm -it $(NAMEFLAGS) $(RUNFLAGS) $(PORTFLAGS) $(MOUNTFLAGS) $(OTHERFLAGS) $(IMAGETAG) $(SHCOMMAND)
 
 stop :
