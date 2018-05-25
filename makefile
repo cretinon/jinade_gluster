@@ -44,7 +44,7 @@ BUILDFLAGS := --rm --force-rm --compress -f $(CURDIR)/$(ARCH)/$(DISTRIB)/Dockerf
 	--label org.label-schema.vendor=$(DOCKER_USER)
 
 MOUNTFLAGS := -v /dev/:/dev -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v /glusterfs/data:/data -v /glusterfs/metadata:/var/lib/glusterd -v /glusterfs/etc/hosts:/etc/hosts 
-OTHERFLAGS := --network gluster-net --ip=10.2.0.10 --privileged=true
+OTHERFLAGS := --network gluster-net --ip=$(IP) --privileged=true
 PORTFLAGS  := -p 24007:24007 -p 24009:24009 -p 49152:49152
 CACHEFLAGS := # --no-cache=true --pull
 NAMEFLAGS  := --name $(OPSYS)_$(CNTNAME) --hostname $(CNTNAME)
